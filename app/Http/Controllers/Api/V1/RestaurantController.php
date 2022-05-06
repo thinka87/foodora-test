@@ -8,6 +8,6 @@ use Illuminate\Http\Request;
 class RestaurantController extends Controller
 {
     public function search(){
-        return "test";
+        return "test workflow";
     }
 }
