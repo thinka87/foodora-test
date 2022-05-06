@@ -32,5 +32,5 @@ jobs:
         ECR_REPOSITORY: simplebank
         IMAGE_TAG: foodora-test
       run: |
-        docker-compose up -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
