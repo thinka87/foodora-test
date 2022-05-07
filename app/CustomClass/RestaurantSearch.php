@@ -9,12 +9,17 @@ class RestaurantSearch
 
     use ReadJsonFileTrait;
     public  $search_data;
+    public  $search_fields;
+    public  $search_distance;
     private  $file_path =  "";
 
-    public function __construct(string $file_path)
+
+    public function __construct(string $file_path, array $search_fields, bool $search_distance)
     {
 
         $this->file_path = $file_path;
+        $this->search_fields = $search_fields;
+        $this->search_distance = $search_distance;
     }
 
     public function readJsonFile()
@@ -23,19 +28,30 @@ class RestaurantSearch
         return $this;
     }
 
-    public function searchByDistance(float $current_longitude, float $current_latitude ,int $distance)
+    public function searchRestaurants()
     {
-        $distance_search_data = array();
+        $search_data = array();
         foreach ($this->search_data as $row) {
-            $calculated_distance=$this->calculateDistance($current_longitude,$current_latitude,$row["longitude"],$row["latitude"]);
-            if($distance >=$calculated_distance){
-                //$row["distance"]=$calculated_distance;
-                $distance_search_data[]=$row;
+            $add_row=true;
+            if ($this->search_distance == true) {
+                $calculated_distance = $this->calculateDistance($this->search_fields["longitude"], $this->search_fields["latitude"], $row["longitude"], $row["latitude"]);
+                $row["distance"]=$calculated_distance;
+                if ($calculated_distance >$this->search_fields["distance"]) {
+                    $add_row=false;
+                }
+                
             }
 
+            if ($this->search_fields["search_text"]!=""){
+                if($this->searchByText($this->search_fields["search_text"],$row)===false)
+                    $add_row=false;
+            }
+
+            if($add_row==true)
+                $search_data[]=$row;
         }
-    
-        $this->search_data=$distance_search_data;
+
+        $this->search_data = $search_data;
         return $this;
     }
 
@@ -48,5 +64,14 @@ class RestaurantSearch
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
         return round($miles * 1.609344);
+    }
+
+    private function searchByText($search_text ,$data){
+
+        if(stristr($data["restaurantName"], $search_text) !== FALSE || stristr($data["city"], $search_text) !== FALSE || stristr($data["cuisine"], $search_text) !== FALSE) {
+            return true;
+        }
+
+        return false;
     }
 }
