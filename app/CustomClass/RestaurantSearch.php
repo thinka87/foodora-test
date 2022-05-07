@@ -4,6 +4,13 @@ namespace App\CustomClass;
 
 use App\Traits\ReadJsonFileTrait;
 
+/**
+ * Restaurant Search class
+ *
+ * Search restaurent using json file
+ *
+ */ 
+
 class RestaurantSearch
 {
 
@@ -12,7 +19,7 @@ class RestaurantSearch
     private  $search_data;
     private  $search_fields;
     private  $search_distance;
-    private $file_path =  "";
+    private  $file_path =  "";
     private $search_field_list = array("distance" => true, "search_text" => true, "restaurant_name" => true, "cuisine" => true, "city" => true);
 
     public  $response;
@@ -25,12 +32,22 @@ class RestaurantSearch
         $this->search_distance = $search_distance;
     }
 
+    /**
+     * Read json file as array
+     *
+     * @return \App\CustomClass\RestaurantSearch
+     */
     public function readJsonFile(): RestaurantSearch
     {
         $this->search_data = $this->readJsonFileAsArray($this->file_path);
         return $this;
     }
 
+     /**
+     * Serach all values in array
+     *
+     * @return \App\CustomClass\RestaurantSearch
+     */
     public function searchRestaurants(): RestaurantSearch
     {
         $search_data = array();
@@ -78,6 +95,15 @@ class RestaurantSearch
         return $this;
     }
 
+    /**
+     * Calculate distance beetween two corrdinates (in KM)
+     * 
+     * @param float $current_longitude
+     * @param float $current_latitude
+     * @param float $res_longitude
+     * @param float $res_latitude
+     * @return float
+     */
     private function calculateDistance(float $current_longitude, float $current_latitude, float $res_longitude, float $res_latitude): float
     {
 
@@ -88,7 +114,12 @@ class RestaurantSearch
         $miles = $dist * 60 * 1.1515;
         return round($miles * 1.609344);
     }
-
+    /**
+     * Serach restaurant name ,city, cuisine match with search text
+     * @param string $search_text
+     * @param array $data
+     * @return bool
+     */
     private function searchByText(string $search_text, array $data): bool
     {
 
@@ -99,6 +130,12 @@ class RestaurantSearch
         return false;
     }
 
+    /**
+     * Serach restaurant name contains in restaurantName key
+     * @param string $search_text
+     * @param array $data
+     * @return bool
+     */
     private function searchByRestaurantName(string $search_text, array $data): bool
     {
 
@@ -108,8 +145,13 @@ class RestaurantSearch
 
         return false;
     }
-
-    private function searchByCuisine(string $search_text, array $data):bool
+    /**
+     * Serach cuisine name contains in cuisine key
+     * @param string $search_text
+     * @param array $data
+     * @return bool
+     */
+    private function searchByCuisine(string $search_text, array $data): bool
     {
 
         if (stristr($data["cuisine"], $search_text) !== FALSE) {
@@ -119,6 +161,12 @@ class RestaurantSearch
         return false;
     }
 
+    /**
+     * Serach city name contains in city key
+     * @param string $search_text
+     * @param array $data
+     * @return bool
+     */
     private function searchByCity(string $search_text, array $data): bool
     {
 
@@ -129,6 +177,11 @@ class RestaurantSearch
         return false;
     }
 
+    /**
+     * Check array contains a bool false value
+     * @param array $array
+     * @return bool
+     */
     private function checkArrayHasFalseValue(array $array): bool
     {
         foreach ($array as $key => $val) {
@@ -140,6 +193,11 @@ class RestaurantSearch
         return false;
     }
 
+    /**
+     * Set final search result json response
+     *
+     * @return \App\CustomClass\RestaurantSearch
+     */
     public function getSearchResult(): RestaurantSearch
     {
 

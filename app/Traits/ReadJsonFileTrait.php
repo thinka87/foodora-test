@@ -2,7 +2,7 @@
   
 namespace App\Traits;
   
-
+// Trait for read json file as an array
 trait ReadJsonFileTrait {
   
 
