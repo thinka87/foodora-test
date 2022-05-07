@@ -38,7 +38,7 @@ class RestaurantSearch
         foreach ($this->search_data as $row) {
 
             $search_field_list = $this->search_field_list;
-            
+
             if ($this->search_distance == true) {
 
                 $calculated_distance = $this->calculateDistance($this->search_fields["longitude"], $this->search_fields["latitude"], $row["longitude"], $row["latitude"]);
@@ -51,7 +51,7 @@ class RestaurantSearch
             if ($this->search_fields["search_text"] != "") {
 
                 if ($this->searchByText($this->search_fields["search_text"], $row) === false)
-                        $search_field_list["search_text"] = false;
+                    $search_field_list["search_text"] = false;
             } else {
 
                 if ($this->search_fields["restaurant_name"] != "") {
@@ -70,7 +70,7 @@ class RestaurantSearch
                 }
             }
 
-            if ($this->checkArrayHasFalseValue($search_field_list)===false)
+            if ($this->checkArrayHasFalseValue($search_field_list) === false)
                 $search_data[] = $row;
         }
 
@@ -129,9 +129,10 @@ class RestaurantSearch
         return false;
     }
 
-    private function checkArrayHasFalseValue($array){
-        foreach ($array as $key=>$val){
-            if($val===false){
+    private function checkArrayHasFalseValue($array)
+    {
+        foreach ($array as $key => $val) {
+            if ($val === false) {
                 return true;
             }
         }
@@ -139,12 +140,13 @@ class RestaurantSearch
         return false;
     }
 
-    public function getSearchResult(){
+    public function getSearchResult()
+    {
 
-        $this->response=response()->json([
+        $this->response = response()->json([
             'success'   => true,
             'data'      => $this->search_data
-        ],200);
+        ], 200);
 
         return $this;
     }
