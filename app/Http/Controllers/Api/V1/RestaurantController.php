@@ -10,7 +10,7 @@ use App\CustomClass\RestaurantSearch;
 class RestaurantController extends Controller
 {
     public function search(RestaurantSearchRequest $request){
-        
+        try{
         $search_fields = $request->only(['restaurant_name', 'cuisine','city','distance','longitude','latitude','search_text']);
         $search_distance=false;
 
@@ -20,8 +20,20 @@ class RestaurantController extends Controller
             $search_distance=true;
         }
          
-        $restaurant_search_data = (new RestaurantSearch(storage_path()."/reastaurent_data.json",$search_fields,$search_distance))->readJsonFile();
-        $restaurant_search_data = $restaurant_search_data->searchRestaurants();
-        print_r($restaurant_search_data->search_data);
+        $restaurant_search_data = (new RestaurantSearch(storage_path()."/reastaurent_data.json",$search_fields,$search_distance))
+                                  ->readJsonFile()
+                                  ->searchRestaurants()
+                                  ->getSearchResult();
+
+        return $restaurant_search_data->response;  
+        
+       }catch(\Exception $e) {
+
+        return $this->response=response()->json([
+            'success'   => false,
+            'message'   => "internal_server_error"
+        ],500);
+       }
+       
     }
 }
