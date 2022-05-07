@@ -8,14 +8,14 @@ class RestaurantSearch
 {
 
     use ReadJsonFileTrait;
-    public  $search_data;
-    public  $search_fields;
-    public  $search_distance;
-    public  $response;
-    private $file_path =  "";
 
+    private  $search_data;
+    private  $search_fields;
+    private  $search_distance;
+    private $file_path =  "";
     private $search_field_list = array("distance" => true, "search_text" => true, "restaurant_name" => true, "cuisine" => true, "city" => true);
 
+    public  $response;
 
     public function __construct(string $file_path, array $search_fields, bool $search_distance)
     {
@@ -25,13 +25,13 @@ class RestaurantSearch
         $this->search_distance = $search_distance;
     }
 
-    public function readJsonFile()
+    public function readJsonFile(): RestaurantSearch
     {
         $this->search_data = $this->readJsonFileAsArray($this->file_path);
         return $this;
     }
 
-    public function searchRestaurants()
+    public function searchRestaurants(): RestaurantSearch
     {
         $search_data = array();
 
@@ -78,7 +78,7 @@ class RestaurantSearch
         return $this;
     }
 
-    private function calculateDistance(float $current_longitude, float $current_latitude, float $res_longitude, float $res_latitude)
+    private function calculateDistance(float $current_longitude, float $current_latitude, float $res_longitude, float $res_latitude): float
     {
 
         $theta = $current_longitude - $res_longitude;
@@ -89,7 +89,7 @@ class RestaurantSearch
         return round($miles * 1.609344);
     }
 
-    private function searchByText($search_text, $data)
+    private function searchByText(string $search_text, array $data): bool
     {
 
         if (stristr($data["restaurantName"], $search_text) !== FALSE || stristr($data["city"], $search_text) !== FALSE || stristr($data["cuisine"], $search_text) !== FALSE) {
@@ -99,7 +99,7 @@ class RestaurantSearch
         return false;
     }
 
-    private function searchByRestaurantName($search_text, $data)
+    private function searchByRestaurantName(string $search_text, array $data): bool
     {
 
         if (stristr($data["restaurantName"], $search_text) !== FALSE) {
@@ -109,7 +109,7 @@ class RestaurantSearch
         return false;
     }
 
-    private function searchByCuisine($search_text, $data)
+    private function searchByCuisine(string $search_text, array $data):bool
     {
 
         if (stristr($data["cuisine"], $search_text) !== FALSE) {
@@ -119,7 +119,7 @@ class RestaurantSearch
         return false;
     }
 
-    private function searchByCity($search_text, $data)
+    private function searchByCity(string $search_text, array $data): bool
     {
 
         if (stristr($data["city"], $search_text) !== FALSE) {
@@ -129,7 +129,7 @@ class RestaurantSearch
         return false;
     }
 
-    private function checkArrayHasFalseValue($array)
+    private function checkArrayHasFalseValue(array $array): bool
     {
         foreach ($array as $key => $val) {
             if ($val === false) {
@@ -140,7 +140,7 @@ class RestaurantSearch
         return false;
     }
 
-    public function getSearchResult()
+    public function getSearchResult(): RestaurantSearch
     {
 
         $this->response = response()->json([

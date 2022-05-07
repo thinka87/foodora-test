@@ -11,13 +11,13 @@ class RestaurantSearchRequest extends FormRequest
     public function rules()
     {
         return [
-            'restaurant_name' => 'string|nullable',
-            'cuisine'=> 'string|nullable',
-            'city' => 'string|nullable',
-            'distance'=> 'integer|min:0',
-            'longitude' => 'numeric|between:-180,180|nullable',
-            'latitude'=> 'numeric|between:-90,90|nullable',
-            'search_text'=> 'string|nullable',
+            'restaurant_name' => 'string|nullable|present',
+            'cuisine'=> 'string|nullable|present',
+            'city' => 'string|nullable|present',
+            'distance'=> 'numeric|nullable|min:0|present',
+            'longitude' => 'numeric|between:-180,180|nullable|present',
+            'latitude'=> 'numeric|between:-90,90|nullable|present',
+            'search_text'=> 'string|nullable|present',
         ];
     }
     public function failedValidation(Validator $validator)
@@ -26,6 +26,6 @@ class RestaurantSearchRequest extends FormRequest
             'success'   => false,
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
-        ]));
+        ],400));
     }
 }
