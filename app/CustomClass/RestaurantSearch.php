@@ -51,42 +51,43 @@ class RestaurantSearch
     public function searchRestaurants(): RestaurantSearch
     {
         $search_data = array();
-
+        //looping json data
         foreach ($this->search_data as $row) {
 
             $search_field_list = $this->search_field_list;
-
+            //check need to search distance
             if ($this->search_distance == true) {
 
                 $calculated_distance = $this->calculateDistance($this->search_fields["longitude"], $this->search_fields["latitude"], $row["longitude"], $row["latitude"]);
                 $row["distance"] = $calculated_distance;
-                if ($calculated_distance > $this->search_fields["distance"]) {
+                //If calulted distance greater than requested distance ignore the restaurent
+                if ($calculated_distance > round($this->search_fields["distance"]*1000)) {
                     $search_field_list["distance"] = false;
                 }
             }
-
+            //check has search text
             if ($this->search_fields["search_text"] != "") {
 
                 if ($this->searchByText($this->search_fields["search_text"], $row) === false)
                     $search_field_list["search_text"] = false;
             } else {
-
+                //check has restaurant name
                 if ($this->search_fields["restaurant_name"] != "") {
                     if ($this->searchByRestaurantName($this->search_fields["restaurant_name"], $row) === false)
                         $search_field_list["restaurant_name"] = false;
                 }
-
+                //check has cuisine
                 if ($this->search_fields["cuisine"] != "") {
                     if ($this->searchByCuisine($this->search_fields["cuisine"], $row) === false)
                         $search_field_list["cuisine"] = false;
                 }
-
+                //check has city
                 if ($this->search_fields["city"] != "") {
                     if ($this->searchByCity($this->search_fields["city"], $row) === false)
                         $search_field_list["city"] = false;
                 }
             }
-
+            //check all search criteria match with each restaurent
             if ($this->checkArrayHasFalseValue($search_field_list) === false)
                 $search_data[] = $row;
         }
@@ -112,7 +113,7 @@ class RestaurantSearch
         $dist = acos($dist);
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
-        return round($miles * 1.609344);
+        return round($miles * 1.609344*1000); //get distance in meteres
     }
     /**
      * Serach restaurant name ,city, cuisine match with search text
