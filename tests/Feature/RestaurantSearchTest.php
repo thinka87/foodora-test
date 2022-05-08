@@ -30,6 +30,69 @@ class RestaurentSearchTest extends TestCase
         
     }
 
+    public function testLongLatValidationTest()
+    {
+        $response = $this->post('/api/restaurants/search',[
+            "restaurant_name" => "",
+            "cuisine"=>"",
+            "city" =>"",
+            "distance"=> "" ,
+            "longitude"=> "180.006559",
+            "latitude"=>"90.332401",
+            "search_text"=> ""
+        ]);
+        $response->assertStatus(400);     
+        $response->assertSee("The longitude must be between -180 and 180.");
+        $response->assertSee("The latitude must be between -90 and 90.");
+        
+    }
+    public function testLongLatValidationWithNegativeValuesTest()
+    {
+        $response = $this->post('/api/restaurants/search',[
+            "restaurant_name" => "",
+            "cuisine"=>"",
+            "city" =>"",
+            "distance"=> "" ,
+            "longitude"=> "-180.006559",
+            "latitude"=>"-90.332401",
+            "search_text"=> ""
+        ]);
+        $response->assertStatus(400);     
+        $response->assertSee("The longitude must be between -180 and 180.");
+        $response->assertSee("The latitude must be between -90 and 90.");
+        
+    }
+
+    public function testLongLatUpperBoundryValidationTest()
+    {
+        $response = $this->post('/api/restaurants/search',[
+            "restaurant_name" => "",
+            "cuisine"=>"",
+            "city" =>"",
+            "distance"=> "" ,
+            "longitude"=> "180.000000",
+            "latitude"=>"90.000000",
+            "search_text"=> ""
+        ]);
+        $response->assertStatus(200);     
+        
+    }
+
+    public function testLongLatLowerBoundryValidationTest()
+    {
+        $response = $this->post('/api/restaurants/search',[
+            "restaurant_name" => "",
+            "cuisine"=>"",
+            "city" =>"",
+            "distance"=> "" ,
+            "longitude"=> "-180.000000",
+            "latitude"=>"-90.000000",
+            "search_text"=> ""
+        ]);
+        $response->assertStatus(200);     
+        
+    }
+
     public function testDataTypeOfKeysTest()
     {
         $response = $this->post('/api/restaurants/search',[
@@ -168,7 +231,7 @@ class RestaurentSearchTest extends TestCase
           ));      
     }
 
-    public function testSearchRestaurantByWith1KMAndNameTest()
+    public function testSearchRestaurantByWithIn1KMAndNameTest()
     {
         $response = $this->post('/api/restaurants/search',[
             "restaurant_name" => "Thaimiddag",
@@ -216,6 +279,39 @@ class RestaurentSearchTest extends TestCase
             ),
           ));      
     }
+
+    public function testSearchRestaurantByTextTest()
+    {
+        $response = $this->post('/api/restaurants/search',[
+            "restaurant_name" => "",
+            "cuisine"=>"",
+            "city" =>"",
+            "distance"=> "" ,
+            "longitude"=> "",
+            "latitude"=>"",
+            "search_text"=> "Stockholm"
+        ]);
+        $response->assertStatus(200);
+        $response->assertDontSee("Lund");
+        $response->assertDontSee("Malmö");
+        $response->assertDontSee("Göteborg");
+        $response->assertJson(array (
+            'success' => true,
+            'data' => 
+            array (
+              0 => 
+              array (
+                'clientKey' => 'e5CDWLrkOYxeissNSJ',
+                'restaurantName' => 'Thaimiddag',
+                'cuisine' => 'Thai',
+                'city' => 'Stockholm',
+                'latitude' => '59.332401',
+                'longitude' => '18.006559',
+              ),
+            ),
+          ));      
+    }
+
 
 
 
