@@ -15,7 +15,7 @@ class RestaurantController extends Controller
             $search_fields = $request->only(['restaurant_name', 'cuisine', 'city', 'distance', 'longitude', 'latitude', 'search_text']);
             $search_distance = false;
 
-            //Make sure, want to calculate distance
+            //Make sure, want to calculate distance and formatting coordinates
             if ($search_fields["distance"] > 0 && is_numeric($search_fields["longitude"]) && is_numeric($search_fields["latitude"])) {
                 $inputs["latitude"] = number_format($search_fields["latitude"], 6, '.', '');
                 $inputs["longitude"] = number_format($search_fields["longitude"], 6, '.', '');
