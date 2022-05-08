@@ -60,7 +60,8 @@ class RestaurantSearch
 
                 $calculated_distance = $this->calculateDistance($this->search_fields["longitude"], $this->search_fields["latitude"], $row["longitude"], $row["latitude"]);
                 $row["distance"] = $calculated_distance;
-                if ($calculated_distance > $this->search_fields["distance"]) {
+                //If calulted distance greater than requested distance ignore the restaurent
+                if ($calculated_distance > round($this->search_fields["distance"]*1000)) {
                     $search_field_list["distance"] = false;
                 }
             }
@@ -112,7 +113,7 @@ class RestaurantSearch
         $dist = acos($dist);
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
-        return round($miles * 1.609344);
+        return round($miles * 1.609344*1000); //get distance in meteres
     }
     /**
      * Serach restaurant name ,city, cuisine match with search text
