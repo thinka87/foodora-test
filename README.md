@@ -1,4 +1,4 @@
-# Foodora php technical test by thilina
+# Laravel ci-cd process with github actions and AWS ecr
 
 
 ## Technologies
